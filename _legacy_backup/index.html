@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Shakhwat Hossain Rasel - Web Developer</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.29/dist/lenis.min.js" defer></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: { brandGreen: '#C9F34C', brandDark: '#111111' },
+                    screens: { 'xs': '400px' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --max-content-width: 1200px
+        }
+
+        /* Smooth Scroll Setup */
+        html.lenis {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto;
+        }
+
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+
+        /* Prevent Horizontal Scroll on Mobile */
+        body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* Animation Classes */
+        .char-reveal {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: top;
+        }
+
+        .char-reveal span {
+            display: inline-block;
+            transform: translateY(110%);
+            transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-active .char-reveal span {
+            transform: translateY(0);
+        }
+
+        .img-reveal-wrapper {
+            overflow: hidden;
+        }
+
+        .img-reveal {
+            transform: scale(1.18);
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform;
+        }
+
+        .spotlight-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Only enable spotlight hover on devices with a mouse to save mobile battery */
+        @media (hover: hover) {
+            .spotlight-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(700px circle at var(--mouse-x) var(--mouse-y), rgba(0, 0, 0, 0.05), transparent 40%);
+                z-index: 1;
+                opacity: 0;
+                transition: opacity 0.45s;
+                pointer-events: none;
+            }
+
+            .spotlight-card:hover::before {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Carousel Items */
+        .carousel-item {
+            width: 220px;
+            /* Smaller for mobile */
+            height: 300px;
+            position: absolute;
+            opacity: 0.6;
+            transition: opacity 0.25s ease;
+            left: 50%;
+            top: 50%;
+            transform-origin: center center;
+            border-radius: 1.5rem;
+            background-size: cover;
+        }
+
+        @media (min-width: 768px) {
+            .carousel-item {
+                width: 280px;
+                height: 380px;
+            }
+        }
+
+        section,
+        main,
+        footer,
+        nav {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.85s ease, transform 0.85s ease;
+            will-change: opacity, transform;
+        }
+
+        .magnetic-btn:focus {
+            outline: 3px solid rgba(201, 243, 76, 0.18);
+            outline-offset: 3px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            section,
+            main,
+            footer,
+            nav,
+            .img-reveal,
+            .char-reveal span {
+                transition: none !important;
+                transform: none !important;
+                opacity: 1 !important;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block
+        }
+
+        /* Mobile Menu CSS */
+        #mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform;
+        }
+
+        #mobile-menu.open {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+
+<body class="bg-white text-gray-900 font-sans antialiased overflow-x-hidden">
+
+    <a href="#main-content" class="sr-only focus:not-sr-only p-2 bg-black text-white">Skip to content</a>
+
+    <nav role="navigation" aria-label="Primary"
+        class="w-full py-3 md:py-6 px-4 md:px-8 max-w-7xl mx-auto flex justify-between items-center sticky top-0 z-50 transition-all duration-300 bg-white/90 backdrop-blur-md border-b border-gray-100/50 md:border-none"
+        id="navbar">
+
+        <div class="flex items-center gap-2 font-bold text-xl tracking-tight relative z-50">
+            <img class="w-24 md:w-32" src="Untitled design.svg" alt="Logo">
+        </div>
+
+        <div class="hidden md:flex gap-8 text-sm font-medium text-gray-600" aria-hidden="false">
+            <a href="#" class="text-black font-semibold hover:scale-105 transition-transform">Home</a>
+            <a href="#" class="hover:text-black transition hover:scale-105 inline-block">About</a>
+            <a href="#" class="hover:text-black transition hover:scale-105 inline-block">Skills</a>
+            <a href="#" class="hover:text-black transition hover:scale-105 inline-block">Projects</a>
+            <a href="#" class="hover:text-black transition hover:scale-105 inline-block">Contact</a>
+        </div>
+
+        <button
+            class="hidden md:flex magnetic-btn bg-[#c6f31a] text-black rounded-full pl-6 pr-2 py-2 text-sm font-medium items-center gap-3 hover:bg-gray-800 hover:text-white transition"
+            aria-label="Contact now">
+            <a href="mailto:shakhwat.rasel989@gmail.com" class="magnetic-text">Contact Now</a>
+            <div class="w-8 h-8 bg-brandGreen rounded-full flex items-center justify-center text-black">
+                <i class="fa-solid fa-arrow-right -rotate-45"></i>
+            </div>
+        </button>
+
+        <button id="mobile-menu-btn"
+            class="md:hidden relative z-50 w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-gray-900 focus:outline-none active:scale-95 transition-transform">
+            <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+
+        <div id="mobile-menu"
+            class="fixed inset-0 bg-white z-40 flex flex-col justify-center items-center gap-8 text-2xl font-bold md:hidden">
+            <a href="#" class="mobile-link hover:text-[#c6f31a] transition">Home</a>
+            <a href="#" class="mobile-link hover:text-[#c6f31a] transition">About</a>
+            <a href="#" class="mobile-link hover:text-[#c6f31a] transition">Skills</a>
+            <a href="#" class="mobile-link hover:text-[#c6f31a] transition">Projects</a>
+
+            <a href="mailto:shakhwat.rasel989@gmail.com"
+                class="mt-4 px-8 py-3 bg-[#c6f31a] text-black text-lg rounded-full font-medium">
+                Contact Me
+            </a>
+
+            <button id="close-menu-btn"
+                class="absolute top-5 right-5 w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main id="main-content" class="max-w-7xl mx-auto px-4 md:px-8 pt-6 md:pt-10 pb-12 md:pb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+            <div class="lg:col-span-4 flex flex-col gap-4 md:gap-6 order-2 lg:order-1 text-center lg:text-left">
+                <span class="text-base md:text-lg text-gray-600 font-medium fade-in">Hey there, I'm</span>
+
+                <h1
+                    class="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1] split-header break-words">
+                    Shakhwat Hossain <br> Rasel
+                </h1>
+
+                <p class="text-gray-500 text-sm md:text-base leading-relaxed max-w-sm mx-auto lg:mx-0 mt-2 fade-in">
+                    Highly motivated Computer Science student with a strong foundation in Web Development (HTML5, CSS3,
+                    JavaScript).
+                </p>
+
+                <div class="mt-2 md:mt-4 fade-in flex justify-center lg:justify-start">
+                    <button
+                        class="magnetic-btn bg-[#D4F954] text-brandDark font-bold rounded-full pl-5 md:pl-6 pr-2 py-2 flex items-center gap-3 hover:brightness-95 transition shadow-lg shadow-lime-100 text-sm md:text-base">
+                        <a href="https://www.linkedin.com/in/shakhwat-hossain-rasel-46506628b" target="_blank"
+                            class="magnetic-text">Lets Connect</a>
+                        <div class="w-8 h-8 bg-black rounded-full flex items-center justify-center text-white">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 flex justify-center order-1 lg:order-2 w-full">
+                <div
+                    class="bg-white p-3 md:p-4 pb-6 rounded-[2rem] md:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100 w-full max-w-sm md:max-w-md parallax-card">
+                    <div
+                        class="relative bg-gray-200 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden aspect-[3/4] w-full img-reveal-wrapper">
+                        <img src="hero-img.jpg" alt="Shakhwat Hossain"
+                            class="w-full h-full object-cover object-center grayscale-[20%] contrast-110 img-reveal"
+                            loading="eager" />
+                        <div class="absolute right-3 top-3 flex flex-col gap-2 md:gap-3 pt-2">
+                            <a href="https://shakhwat-93.github.io/"
+                                class="w-8 h-8 md:w-10 md:h-10 bg-gray-500/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black transition hover:scale-110"><i
+                                    class="fa-solid fa-globe text-sm"></i></a>
+                            <a href="https://www.linkedin.com/in/shakhwat-hossain-rasel-46506628b"
+                                class="w-8 h-8 md:w-10 md:h-10 bg-gray-500/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-[#0a66c2] transition hover:scale-110"><i
+                                    class="fa-brands fa-linkedin-in text-sm"></i></a>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center gap-2 mt-4 md:mt-5">
+                        <span class="w-2.5 h-2.5 md:w-3 md:h-3 bg-[#c6f31a] rounded-full animate-pulse"></span>
+                        <span class="text-xs md:text-sm font-medium text-gray-700">Available for IT roles</span>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="lg:col-span-3 flex flex-row lg:flex-col justify-center md:justify-between lg:justify-start items-center lg:items-start gap-6 md:gap-8 mt-4 lg:mt-32 order-3">
+                <div class="space-y-1 md:space-y-2 fade-in-right text-center lg:text-left">
+                    <p class="text-gray-500 font-medium text-xs md:text-sm max-w-[200px]">B.Sc in CSE
+                        (Running)<br>Southeast University</p>
+                    <h2 class="text-2xl md:text-4xl font-bold text-gray-900 leading-tight">Web <br
+                            class="hidden lg:block"> Developer</h2>
+                </div>
+                <div class="space-y-2 md:space-y-3 fade-in-right text-center lg:text-left">
+                    <div class="flex items-center justify-center lg:justify-start">
+                        <div
+                            class="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center font-bold text-xs md:text-sm">
+                            JS</div>
+                        <div
+                            class="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center font-bold -ml-2 md:-ml-3 text-xs md:text-sm">
+                            CSS</div>
+                        <div
+                            class="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white bg-gray-400 flex items-center justify-center font-bold -ml-2 md:-ml-3 text-xs md:text-sm">
+                            HT</div>
+                        <div
+                            class="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white bg-gray-900 text-white text-[10px] md:text-xs flex items-center justify-center -ml-2 md:-ml-3 font-bold">
+                            IT</div>
+                    </div>
+                    <div>
+                        <p class="font-bold text-lg md:text-xl">3+ <span
+                                class="text-xs md:text-sm font-normal text-gray-600">Web Projects</span></p>
+                        <p class="text-xs md:text-sm text-gray-900 font-medium">Responsive Design Expert</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="max-w-7xl mx-auto py-12 md:py-24">
+            <div class="flex flex-col items-center mb-12 md:mb-24">
+                <p class="text-sm text-gray-500 font-medium mb-6 md:mb-10">Technologies I use</p>
+                <div
+                    class="w-full flex flex-wrap justify-center md:justify-between items-center gap-4 md:gap-8 opacity-60 md:opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+                    <div class="flex items-center gap-2 text-lg md:text-2xl font-bold text-gray-800">HTML5</div>
+                    <div class="flex items-center gap-2 text-lg md:text-2xl font-bold text-gray-800">CSS3</div>
+                    <div class="flex items-center gap-2 text-lg md:text-2xl font-bold text-gray-800">JavaScript</div>
+                    <div class="flex items-center gap-2 text-lg md:text-2xl font-bold text-gray-800">Tailwind</div>
+                    <div class="flex items-center gap-2 text-lg md:text-2xl font-bold text-gray-800">Wordpress</div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
+                <div class="flex flex-col gap-8 md:gap-10">
+                    <h2 class="text-3xl md:text-[2.5rem] leading-tight font-bold text-gray-900 split-header">I’m
+                        Shakhwat Hossain, a developer with a proven ability to quickly learn new technologies.</h2>
+                    <div class="flex flex-col sm:flex-row gap-6 sm:gap-12 fade-in">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 text-base md:text-lg">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-900 text-sm md:text-base">Call Today</p>
+                                <p class="text-gray-500 text-xs md:text-sm mt-1">+8801315-183993</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 text-base md:text-lg">
+                                <i class="fa-regular fa-envelope"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-900 text-sm md:text-base">Email Me</p>
+                                <p class="text-gray-500 text-xs md:text-sm mt-1 break-all">shakhwat.rasel989@gmail.com
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button
+                            class="magnetic-btn bg-[#1c1c1c] text-white rounded-full pl-6 md:pl-8 pr-2 py-2.5 font-medium flex items-center gap-4 hover:bg-gray-800 transition group w-fit">
+                            <a href="Shakhwat Hossain Rasel (5).pdf" download="Shakhwat Hossain Rasel (5).pdf"
+                                class="text-sm md:text-base">Download CV</a>
+                            <div
+                                class="w-8 h-8 md:w-9 md:h-9 bg-white rounded-full flex items-center justify-center text-black group-hover:translate-x-1 transition-transform">
+                                <i class="fa-solid fa-arrow-down text-sm"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 md:gap-5">
+                    <div
+                        class="h-48 md:h-80 w-full rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-gray-100 img-reveal-wrapper">
+                        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=600"
+                            class="w-full h-full object-cover img-reveal" alt="Coding" loading="lazy" />
+                    </div>
+                    <div
+                        class="h-48 md:h-80 w-full rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-gray-100 img-reveal-wrapper mt-8 md:mt-12">
+                        <img src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&q=80&w=600"
+                            class="w-full h-full object-cover img-reveal" alt="Development" loading="lazy" />
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <section class="bg-[#262626] text-white py-16 md:py-28">
+        <div class="max-w-7xl mx-auto px-4 md:px-8">
+            <div class="max-w-4xl mx-auto text-center mb-12 md:mb-20">
+                <h2 class="text-2xl md:text-[2.5rem] leading-tight font-semibold split-header">I am ready to work hard,
+                    collaborate with teams, and <span class="text-gray-500">contribute to continuous growth.</span></h2>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+                <div class="lg:col-span-4">
+                    <div class="relative w-full rounded-2xl overflow-hidden group cursor-pointer img-reveal-wrapper">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600"
+                            class="w-full h-48 md:h-64 object-cover opacity-80 group-hover:scale-105 transition duration-700 img-reveal"
+                            alt="" loading="lazy" />
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div
+                                class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center pl-1 shadow-lg group-hover:scale-110 transition duration-300">
+                                <i class="fa-solid fa-play text-black text-lg md:text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-0">
+                    <div
+                        class="flex flex-col justify-center items-center sm:items-start pl-0 md:pl-12 sm:border-l border-gray-600">
+                        <span class="text-4xl md:text-6xl font-medium mb-2 counter" data-target="3">0</span><span
+                            class="text-gray-400 text-sm md:text-lg">Months Experience</span>
+                    </div>
+                    <div
+                        class="flex flex-col justify-center items-center sm:items-start pl-0 md:pl-12 sm:border-l border-gray-600">
+                        <span class="text-4xl md:text-6xl font-medium mb-2 flex gap-1"><span class="counter"
+                                data-target="5">0</span>+</span><span class="text-gray-400 text-sm md:text-lg">Projects
+                            Completed</span>
+                    </div>
+                    <div
+                        class="flex flex-col justify-center items-center sm:items-start pl-0 md:pl-12 sm:border-l border-gray-600">
+                        <span class="text-4xl md:text-6xl font-medium mb-2 flex gap-1"><span class="counter"
+                                data-target="100">0</span>%</span><span
+                            class="text-gray-400 text-sm md:text-lg">Professionalism</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white py-16 md:py-28">
+        <div class="max-w-7xl mx-auto px-4 md:px-8">
+            <div
+                class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8 mb-12 md:mb-20">
+                <div class="space-y-4 md:space-y-6">
+                    <div
+                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gray-200 text-sm font-medium text-gray-600">
+                        <span class="w-1.5 h-1.5 bg-black rounded-sm"></span> Expertise
+                    </div>
+                    <h2 class="text-4xl md:text-7xl tracking-tight split-header"><span
+                            class="font-bold text-black">My</span> <span
+                            class="font-medium text-gray-500">Services</span></h2>
+                    <p class="text-gray-500 max-w-lg text-base md:text-lg">Leveraging my hard skills in Development,
+                        Networking and IT support.</p>
+                </div>
+                <button
+                    class="magnetic-btn bg-[#1c1c1c] text-white rounded-full pl-6 md:pl-8 pr-2 py-3 font-medium flex items-center gap-4 hover:bg-gray-800 transition group text-sm md:text-base"
+                    aria-label="View all skills"><span class="magnetic-text">View All Skills</span>
+                    <div
+                        class="w-8 h-8 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center text-black group-hover:rotate-45 transition-transform duration-300">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </button>
+            </div>
+            <div class="flex flex-col">
+                <div
+                    class="group border-t border-gray-200 hover:border-gray-400 transition-colors duration-300 cursor-pointer py-8 md:py-12 flex justify-between items-center fade-in-up">
+                    <h3
+                        class="text-xl md:text-5xl font-medium uppercase tracking-tight group-hover:translate-x-4 transition-transform duration-300">
+                        Web Development</h3>
+                    <div
+                        class="opacity-100 md:opacity-0 group-hover:opacity-100 -translate-x-0 md:-translate-x-10 group-hover:translate-x-0 transition-all duration-300">
+                        <i class="fa-solid fa-arrow-right -rotate-45 text-2xl md:text-3xl text-gray-400"></i>
+                    </div>
+                </div>
+                <div
+                    class="group border-t border-gray-200 hover:border-gray-400 transition-colors duration-300 cursor-pointer py-8 md:py-12 flex justify-between items-center fade-in-up">
+                    <h3
+                        class="text-xl md:text-5xl font-medium uppercase tracking-tight group-hover:translate-x-4 transition-transform duration-300">
+                        Landing Page</h3>
+                    <div
+                        class="opacity-100 md:opacity-0 group-hover:opacity-100 -translate-x-0 md:-translate-x-10 group-hover:translate-x-0 transition-all duration-300">
+                        <i class="fa-solid fa-arrow-right -rotate-45 text-2xl md:text-3xl text-gray-400"></i>
+                    </div>
+                </div>
+                <div
+                    class="group border-t border-gray-200 hover:border-gray-400 transition-colors duration-300 cursor-pointer py-8 md:py-12 flex justify-between items-center fade-in-up">
+                    <h3
+                        class="text-xl md:text-5xl font-medium uppercase tracking-tight group-hover:translate-x-4 transition-transform duration-300">
+                        Responsive Design</h3>
+                    <div
+                        class="opacity-100 md:opacity-0 group-hover:opacity-100 -translate-x-0 md:-translate-x-10 group-hover:translate-x-0 transition-all duration-300">
+                        <i class="fa-solid fa-arrow-right -rotate-45 text-2xl md:text-3xl text-gray-400"></i>
+                    </div>
+                </div>
+                <div
+                    class="group border-t border-b border-gray-200 hover:border-gray-400 transition-colors duration-300 cursor-pointer py-8 md:py-12 flex justify-between items-center fade-in-up">
+                    <h3
+                        class="text-xl md:text-5xl font-medium uppercase tracking-tight group-hover:translate-x-4 transition-transform duration-300">
+                        SEO Friendly Website</h3>
+                    <div
+                        class="opacity-100 md:opacity-0 group-hover:opacity-100 -translate-x-0 md:-translate-x-10 group-hover:translate-x-0 transition-all duration-300">
+                        <i class="fa-solid fa-arrow-right -rotate-45 text-2xl md:text-3xl text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white py-16 md:py-28">
+        <div class="max-w-7xl mx-auto px-4 md:px-8">
+            <div class="flex flex-col items-center text-center mb-12 md:mb-24">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gray-200 text-sm font-medium text-gray-600 mb-6 md:mb-8">
+                    <span class="w-1.5 h-1.5 bg-black rounded-sm"></span> Soft Skills
+                </div>
+                <h2 class="text-4xl md:text-7xl tracking-tight mb-4 md:mb-6 split-header"><span
+                        class="font-bold text-black">Why</span> <span class="font-medium text-gray-500">Choose me</span>
+                </h2>
+                <p class="text-gray-500 max-w-2xl text-base md:text-lg leading-relaxed">Seeking an entry-level role
+                    where technical aptitude and effective communication can contribute to team efficiency.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                <div
+                    class="spotlight-card relative rounded-[2rem] border border-gray-100 p-6 md:p-10 flex flex-col justify-between overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 min-h-[250px] md:min-h-[300px]">
+                    <div class="text-3xl md:text-4xl text-gray-800 mb-4"><i class="fa-solid fa-puzzle-piece"></i></div>
+                    <div>
+                        <h3 class="text-xl md:text-3xl font-medium text-gray-900 mb-2 md:mb-4">Problem Solving</h3>
+                        <p class="text-gray-500 text-sm md:text-base leading-relaxed">Resolving technical issues
+                            efficiently.</p>
+                    </div>
+                </div>
+                <div
+                    class="spotlight-card relative rounded-[2rem] border border-gray-100 p-6 md:p-10 flex flex-col justify-between overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 min-h-[250px] md:min-h-[300px]">
+                    <div class="text-3xl md:text-4xl text-gray-800 mb-4"><i class="fa-solid fa-comments"></i></div>
+                    <div>
+                        <h3 class="text-xl md:text-3xl font-medium text-gray-900 mb-2 md:mb-4">Communication</h3>
+                        <p class="text-gray-500 text-sm md:text-base leading-relaxed">Professional communication
+                            ensuring clarity.</p>
+                    </div>
+                </div>
+                <div
+                    class="spotlight-card relative rounded-[2rem] border border-gray-100 p-6 md:p-10 flex flex-col justify-between overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 min-h-[250px] md:min-h-[300px]">
+                    <div class="text-3xl md:text-4xl text-gray-800 mb-4"><i class="fa-solid fa-bolt"></i></div>
+                    <div>
+                        <h3 class="text-xl md:text-3xl font-medium text-gray-900 mb-2 md:mb-4">Quick Learner</h3>
+                        <p class="text-gray-500 text-sm md:text-base leading-relaxed">Adapt to new technologies quickly.
+                        </p>
+                    </div>
+                </div>
+                <div
+                    class="spotlight-card relative rounded-[2rem] border border-gray-100 p-6 md:p-10 flex flex-col justify-between overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 min-h-[250px] md:min-h-[300px]">
+                    <div class="text-3xl md:text-4xl text-gray-800 mb-4"><i class="fa-solid fa-clock"></i></div>
+                    <div>
+                        <h3 class="text-xl md:text-3xl font-medium text-gray-900 mb-2 md:mb-4">Time Management</h3>
+                        <p class="text-gray-500 text-sm md:text-base leading-relaxed">Work productively under pressure.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-[#262626] py-20 md:py-48 relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-4 md:px-8 text-center relative z-10">
+            <h2 class="text-2xl md:text-[3.5rem] leading-tight font-semibold text-white split-header">
+                I build full responsiveness across desktop and mobile devices. <br>
+                <span class="text-gray-500 block mt-4 md:inline md:mt-0">— let’s bring your vision to life.</span>
+            </h2>
+        </div>
+        <div class="absolute bottom-0 right-0 pointer-events-none opacity-20">
+            <svg width="150" height="150" md:width="300" md:height="300" viewBox="0 0 200 200" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 200C50 200 50 150 100 150C150 150 150 100 150 100C150 100 150 50 200 50" stroke="white"
+                    stroke-width="20" stroke-linecap="round" />
+            </svg>
+        </div>
+    </section>
+
+    <section class="bg-white py-16 md:py-28">
+        <div class="max-w-7xl mx-auto px-4 md:px-8">
+            <div
+                class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8 mb-12 md:mb-16">
+                <div class="space-y-4 md:space-y-6">
+                    <div
+                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gray-200 text-sm font-medium text-gray-600">
+                        <span class="w-1.5 h-1.5 bg-black rounded-sm"></span> Portfolio
+                    </div>
+                    <h2 class="text-4xl md:text-7xl tracking-tight split-header"><span
+                            class="font-bold text-black">My</span> <span class="font-medium text-gray-500">Recent
+                            Works</span></h2>
+                    <p class="text-gray-500 max-w-lg text-base md:text-lg">A showcase of my Web Development projects.
+                    </p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 md:gap-y-12">
+                <a href="https://shakhwat-93.github.io/sohan-food/" target="_blank" class="group block fade-in-up"
+                    aria-label="Responsive Food Website">
+                    <div
+                        class="rounded-[2rem] overflow-hidden mb-4 md:mb-6 aspect-[4/3] bg-gray-100 img-reveal-wrapper">
+                        <img src="Screenshot 2025-11-17 003022.png" class="w-full h-full object-cover img-reveal"
+                            alt="Food Website" loading="lazy">
+                    </div>
+                    <p class="text-xs md:text-sm text-gray-400 font-medium mb-1">HTML5 / CSS3 / JS</p>
+                    <h3 class="text-xl md:text-2xl font-bold text-gray-900">Responsive Food Website</h3>
+                </a>
+
+                <a href="https://shakhwat-93.github.io/Saas-website/" target="_blank" class="group block fade-in-up"
+                    aria-label="SaaS Website">
+                    <div
+                        class="rounded-[2rem] overflow-hidden mb-4 md:mb-6 aspect-[4/3] bg-[#DEE5D9] img-reveal-wrapper">
+                        <img src="saas.png" class="w-full h-full object-cover img-reveal" alt="SaaS Website"
+                            loading="lazy">
+                    </div>
+                    <p class="text-xs md:text-sm text-gray-400 font-medium mb-1">Web Design</p>
+                    <h3 class="text-xl md:text-2xl font-bold text-gray-900">SaaS Website</h3>
+                </a>
+
+                <a href="https://shakhwat-93.github.io/assignment-3/" target="_blank" class="group block fade-in-up"
+                    aria-label="Web Assignment">
+                    <div
+                        class="rounded-[2rem] overflow-hidden mb-4 md:mb-6 aspect-[4/3] bg-gray-100 img-reveal-wrapper">
+                        <img src="fresh.png" class="w-full h-full object-cover img-reveal" alt="Assignment Project"
+                            loading="lazy">
+                    </div>
+                    <p class="text-xs md:text-sm text-gray-400 font-medium mb-1">Development</p>
+                    <h3 class="text-xl md:text-2xl font-bold text-gray-900">Fresh Fruits Website</h3>
+                </a>
+
+                <a href="https://shakhwat-93.github.io/cost-management/" class="group block fade-in-up"
+                    aria-label="Code Structure">
+                    <div
+                        class="rounded-[2rem] overflow-hidden mb-4 md:mb-6 aspect-[4/3] bg-[#292929] img-reveal-wrapper">
+                        <img src="cost.png" class="w-full h-full object-cover opacity-80 img-reveal" alt="Coding"
+                            loading="lazy">
+                    </div>
+                    <p class="text-xs md:text-sm text-gray-400 font-medium mb-1">System</p>
+                    <h3 class="text-xl md:text-2xl font-bold text-gray-900">Cost Management System</h3>
+                </a>
+            </div>
+            <div class="flex justify-center mt-12 md:mt-20">
+                <button
+                    class="magnetic-btn bg-[#1c1c1c] text-white rounded-full pl-6 md:pl-8 pr-2 py-3 font-medium flex items-center gap-4 hover:bg-gray-800 transition group text-sm md:text-base">
+                    <span class="magnetic-text">View All Works</span>
+                    <div
+                        class="w-8 h-8 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center text-black group-hover:rotate-45 transition-transform duration-300">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="carousel-section" class="bg-black py-16 md:py-32 text-white overflow-hidden relative">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 flex flex-col items-center text-center mb-12 md:mb-16">
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4 split-header">Let's Build <br> something
+                meaningful</h2>
+            <p class="text-gray-400 max-w-2xl text-sm md:text-base leading-relaxed mb-8">I am ready to apply my skills
+                to your next project.</p>
+            <button class="bg-white text-black px-6 py-3 rounded-full text-sm font-bold hover:bg-gray-200 transition">
+                <a href="mailto:shakhwat.rasel989@gmail.com">Email Me Now</a>
+            </button>
+        </div>
+        <div class="relative w-full h-[350px] md:h-[500px] flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing touch-none"
+            id="carousel-container" tabindex="0" aria-label="Projects carousel">
+            <div id="perspective-carousel"
+                class="absolute inset-0 flex items-center justify-center transition-transform duration-100 ease-out"
+                style="perspective: 1000px; transform-style: preserve-3d;">
+                <div class="carousel-item relative bg-gray-900 rounded-[2rem] overflow-hidden flex-shrink-0 shadow-2xl">
+                    <img src="cost.png"
+                        class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500"
+                        loading="lazy" />
+                </div>
+                <div
+                    class="carousel-item relative bg-[#C9F34C] rounded-[2rem] overflow-hidden flex-shrink-0 shadow-2xl p-4 flex items-center justify-center">
+                    <img src="Screenshot 2025-11-17 003022.png"
+                        class="w-full h-full object-contain grayscale hover:grayscale-0 transition duration-500"
+                        loading="lazy" />
+                </div>
+                <div class="carousel-item relative bg-white rounded-[2rem] overflow-hidden flex-shrink-0 shadow-2xl">
+                    <img src="fresh.png"
+                        class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500 opacity-90"
+                        loading="lazy" />
+                </div>
+                <div
+                    class="carousel-item relative bg-[#1A1A1A] rounded-[2rem] overflow-hidden flex-shrink-0 shadow-2xl p-8 flex flex-col justify-between">
+                    <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-white"><i
+                            class="fa-solid fa-laptop-code"></i></div>
+                    <div>
+                        <h3 class="text-2xl md:text-3xl font-bold leading-tight mb-2">Web <br> <span
+                                class="text-blue-400">Dev</span></h3>
+                    </div>
+                </div>
+                <div class="carousel-item relative bg-gray-900 rounded-[2rem] overflow-hidden flex-shrink-0 shadow-2xl">
+                    <img src="saas.png"
+                        class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500"
+                        loading="lazy" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-[#080808] text-white pt-16 md:pt-24 pb-10 border-t border-gray-900">
+        <div class="max-w-7xl mx-auto px-4 md:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 mb-12 md:mb-20">
+                <div class="lg:col-span-5 text-center lg:text-left">
+                    <h2
+                        class="text-4xl md:text-5xl font-bold tracking-tighter flex items-start justify-center lg:justify-start gap-1 mb-8 md:mb-10">
+                        Rasel<span class="text-lg mt-1 font-normal text-gray-400">.</span></h2>
+                    <div class="max-w-sm mx-auto lg:mx-0 mb-8 md:mb-10">
+                        <div class="relative flex items-center border-b border-gray-800 pb-3"><input type="email"
+                                placeholder="shakhwat.rasel989@gmail.com"
+                                class="w-full bg-transparent border-none outline-none text-gray-300 text-sm font-medium py-1"
+                                readonly><button id="subscribe-btn"
+                                class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform"
+                                aria-label="Subscribe"><i
+                                    class="fa-solid fa-arrow-right -rotate-45 text-sm"></i></button></div>
+                    </div>
+                    <div class="flex gap-6 text-gray-500 text-lg justify-center lg:justify-start">
+                        <a href="https://www.linkedin.com/in/shakhwat-hossain-rasel-46506628b"
+                            class="hover:text-white transition" aria-label="LinkedIn"><i
+                                class="fa-brands fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div
+                    class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 lg:gap-12 text-center sm:text-left">
+                    <div>
+                        <h4 class="font-bold text-white mb-4 md:mb-6">Navigation</h4>
+                        <ul class="space-y-4 text-sm text-gray-500 font-medium">
+                            <li><a href="#" class="hover:text-white">Home</a></li>
+                            <li><a href="#" class="hover:text-white">About us</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white mb-4 md:mb-6">Contact</h4>
+                        <ul class="space-y-4 text-sm text-gray-500 font-medium">
+                            <li><a href="#" class="hover:text-white">Modhubag, Dhaka</a></li>
+                            <li><a href="#" class="hover:text-white">Mahiganj, Rangpur</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="border-t border-gray-900 pt-8 flex flex-col-reverse md:flex-row justify-between items-center gap-6 text-xs text-gray-500 font-medium">
+                <div>2025 © Shakhwat Hossain Rasel. All rights reserved.</div>
+                <div class="flex items-center gap-6">
+                    <div class="order-2 md:order-1">Design by <span class="text-white font-semibold">Shakhwat</span>
+                    </div><button id="scrollTopBtn"
+                        class="order-1 md:order-2 w-10 h-10 border border-gray-800 rounded-lg flex items-center justify-center text-white hover:bg-white hover:text-black transition duration-300"
+                        aria-label="Scroll to top"><i class="fa-solid fa-arrow-up"></i></button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+            (function () {
+                // Mobile detection for performance adjustments
+                const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+                const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(initSmoothAndEffects, 60);
+                    initMobileMenu();
+                    initNavbarHide();
+                });
+
+                // --- Navbar Hide on Scroll ---
+                function initNavbarHide() {
+                    const navbar = document.getElementById('navbar');
+                    let lastScrollY = window.scrollY;
+                    let ticking = false;
+
+                    function updateNavbar() {
+                        const currentScrollY = window.scrollY;
+
+                        // Hide navbar when scrolling down past threshold, stay hidden
+                        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                            // Scrolling down & past threshold - hide navbar permanently
+                            navbar.style.transform = 'translateY(-100%)';
+                            navbar.style.opacity = '0';
+                        }
+                        // Removed else block - navbar stays hidden when scrolling up
+
+
+                        lastScrollY = currentScrollY;
+                        ticking = false;
+                    }
+
+                    window.addEventListener('scroll', () => {
+                        if (!ticking) {
+                            window.requestAnimationFrame(updateNavbar);
+                            ticking = true;
+                        }
+                    });
+                }
+
+                // --- Mobile Menu Logic (Improved) ---
+                function initMobileMenu() {
+                    const btn = document.getElementById('mobile-menu-btn');
+                    const menu = document.getElementById('mobile-menu');
+                    const closeBtn = document.getElementById('close-menu-btn');
+                    const links = document.querySelectorAll('.mobile-link');
+
+                    function toggleMenu() {
+                        const isOpen = menu.classList.contains('open');
+                        if (isOpen) {
+                            menu.classList.remove('open');
+                            document.body.style.overflow = '';
+                            setTimeout(() => menu.classList.add('hidden'), 400);
+                        } else {
+                            menu.classList.remove('hidden');
+                            setTimeout(() => menu.classList.add('open'), 10);
+                            document.body.style.overflow = 'hidden';
+                        }
+                    }
+
+                    if (btn) btn.addEventListener('click', toggleMenu);
+                    if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
+                    links.forEach(link => link.addEventListener('click', toggleMenu));
+                }
+
+                function initSmoothAndEffects() {
+                    // --- Lenis Scroll (Optimized for Mobile) ---
+                    if (typeof Lenis !== 'undefined' && !prefersReduced) {
+                        const lenisInstance = new Lenis({
+                            duration: 1.2,
+                            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                            smooth: true,
+                            // Mobile touch settings
+                            touchMultiplier: 2,
+                            infinite: false
+                        });
+                        window.lenis = lenisInstance;
+                        function raf(time) { lenisInstance.raf(time); requestAnimationFrame(raf); }
+                        requestAnimationFrame(raf);
+                    }
+
+                    // --- GSAP Setup ---
+                    try { if (typeof gsap !== 'undefined') gsap.registerPlugin(ScrollTrigger); } catch (e) { }
+
+                    if (window.lenis && typeof ScrollTrigger !== 'undefined') {
+                        ScrollTrigger.scrollerProxy(document.documentElement, {
+                            scrollTop(value) { return arguments.length ? window.lenis.scrollTo(value, { immediate: true }) : window.pageYOffset; },
+                            getBoundingClientRect() { return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight }; }
+                        });
+                        window.lenis.on && window.lenis.on('scroll', ScrollTrigger.update);
+                    }
+
+                    if (prefersReduced) {
+                        document.querySelectorAll('section, main, footer, nav').forEach(el => el.style.opacity = 1);
+                        return;
+                    }
+
+                    // Text Reveals
+                    document.querySelectorAll('.split-header').forEach(el => {
+                        const text = el.textContent.trim();
+                        el.innerHTML = '';
+                        const wrapper = document.createElement('span'); wrapper.className = 'char-reveal';
+                        const inner = document.createElement('span'); inner.innerText = text;
+                        wrapper.appendChild(inner); el.appendChild(wrapper);
+                        el.classList.add('reveal-active');
+                        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                            gsap.from(inner, { y: '110%', duration: 1.05, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 92%' } });
+                        }
+                    });
+
+                    if (typeof gsap !== 'undefined') {
+                        const trig = (typeof ScrollTrigger !== 'undefined') ? ScrollTrigger : null;
+                        gsap.utils.toArray('.fade-in, .fade-in-up, .fade-in-right').forEach(el => {
+                            gsap.from(el, { y: 40, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: trig ? { trigger: el, start: 'top 90%' } : null });
+                        });
+                        gsap.utils.toArray('section, main, footer, nav').forEach(el => {
+                            gsap.fromTo(el, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.85, ease: 'power3.out', scrollTrigger: trig ? { trigger: el, start: 'top 92%', toggleActions: 'play none none none' } : null });
+                        });
+
+                        // Only parallax images on non-touch devices to save battery/performance on mobile
+                        if (!isTouch) {
+                            gsap.utils.toArray('.img-reveal').forEach(img => {
+                                gsap.fromTo(img, { scale: 1.18 }, { scale: 1, ease: 'none', scrollTrigger: trig ? { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } : null });
+                            });
+                        } else {
+                            // On mobile, just make sure they are scale 1
+                            gsap.set('.img-reveal', { scale: 1 });
+                        }
+
+                        gsap.utils.toArray('.counter').forEach(counter => {
+                            const target = parseFloat(counter.getAttribute('data-target')) || 0;
+                            gsap.to(counter, { innerHTML: target, duration: Math.min(2.5, Math.max(1.2, target / 30)), snap: { innerHTML: 1 }, ease: 'power2.out', scrollTrigger: trig ? { trigger: counter, start: 'top 92%', once: true } : null });
+                        });
+                    }
+
+                    // Mouse Move Effects (Disable on Touch for Performance)
+                    if (!isTouch) {
+                        document.querySelectorAll('.magnetic-btn').forEach(btn => {
+                            btn.addEventListener('mousemove', (e) => {
+                                const rect = btn.getBoundingClientRect();
+                                const x = e.clientX - rect.left - rect.width / 2;
+                                const y = e.clientY - rect.top - rect.height / 2;
+                                if (typeof gsap !== 'undefined') gsap.to(btn, { x: x * 0.18, y: y * 0.18, duration: 0.28, overwrite: true });
+                                else btn.style.transform = `translate(${x * 0.18}px, ${y * 0.18}px)`;
+                            }, { passive: true });
+                            btn.addEventListener('mouseleave', () => { if (typeof gsap !== 'undefined') gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.4)' }); else btn.style.transform = ''; });
+                        });
+
+                        document.querySelectorAll('.spotlight-card').forEach(card => {
+                            card.addEventListener('mousemove', e => {
+                                const rect = card.getBoundingClientRect();
+                                card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                                card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+                            }, { passive: true });
+                        });
+                    }
+
+                    // --- Carousel Logic (Mobile Touch Optimized) ---
+                    const carouselCont = document.getElementById('carousel-container');
+                    const items = Array.from(document.querySelectorAll('.carousel-item'));
+                    const totalItems = items.length;
+                    let currentScroll = 0, targetScroll = 0, isPointerDown = false, lastPointerX = 0, velocity = 0;
+                    const centerIndex = (totalItems - 1) / 2;
+
+                    function updateCarousel() {
+                        currentScroll += (targetScroll - currentScroll) * 0.12;
+                        items.forEach((item, index) => {
+                            // Adjust spacing based on screen width
+                            const spacing = window.innerWidth < 768 ? 220 : 320;
+                            const offset = (index - centerIndex) * spacing + currentScroll;
+                            const absOffset = Math.abs(offset);
+                            const scale = Math.max(0.62, 1 - (absOffset / 1400));
+                            const opacity = Math.max(0.22, 1 - (absOffset / 1200));
+                            const zIndex = Math.round(1000 - absOffset);
+                            // Reduce rotation on mobile for cleaner look
+                            const maxRot = window.innerWidth < 768 ? 20 : 50;
+                            const rotateY = Math.max(-maxRot, Math.min(maxRot, -(offset / 1400) * 90));
+                            const translateX = offset * 0.78;
+                            const translateY = (absOffset / 200) * -18;
+                            item.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateY(${rotateY}deg) scale(${scale}) translateZ(0)`;
+                            item.style.zIndex = zIndex;
+                            item.style.opacity = opacity;
+                        });
+                        requestAnimationFrame(updateCarousel);
+                    }
+                    requestAnimationFrame(updateCarousel);
+
+                    // Handle both Mouse and Touch events explicitly
+                    function onPointerDown(e) {
+                        isPointerDown = true;
+                        lastPointerX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+                        carouselCont.classList.add('active');
+                    }
+                    function onPointerMove(e) {
+                        if (!isPointerDown) return;
+                        const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+                        const dx = clientX - lastPointerX;
+                        lastPointerX = clientX;
+                        targetScroll += dx * 1.5; // Faster scroll on mobile
+                        velocity = dx;
+                    }
+                    function onPointerUp() {
+                        isPointerDown = false;
+                        const decay = setInterval(() => {
+                            if (Math.abs(velocity) < 0.1) { clearInterval(decay); return; }
+                            targetScroll += velocity;
+                            velocity *= 0.92;
+                        }, 16);
+                        carouselCont.classList.remove('active');
+                    }
+                    function onWheel(e) { targetScroll += -e.deltaY * 0.7; }
+
+                    carouselCont.addEventListener('mousedown', onPointerDown, { passive: true });
+                    carouselCont.addEventListener('touchstart', onPointerDown, { passive: true });
+
+                    window.addEventListener('mousemove', onPointerMove, { passive: true });
+                    window.addEventListener('touchmove', onPointerMove, { passive: true });
+
+                    window.addEventListener('mouseup', onPointerUp, { passive: true });
+                    window.addEventListener('touchend', onPointerUp, { passive: true });
+
+                    carouselCont.addEventListener('wheel', onWheel, { passive: true });
+
+                    let autoDir = 1;
+                    setInterval(() => { if (!isPointerDown) targetScroll += 0.5 * autoDir; if (Math.abs(targetScroll) > 2400) autoDir *= -1; }, 35);
+
+                    document.getElementById('scrollTopBtn').addEventListener('click', () => { if (window.lenis && typeof window.lenis.scrollTo === 'function') window.lenis.scrollTo(0); else window.scrollTo({ top: 0, behavior: 'smooth' }); });
+                    document.getElementById('subscribe-btn').addEventListener('click', () => { alert('Email field is read-only. Use the contact link to send email.'); });
+                    window.lenis = window.lenis || { scrollTo: (val) => window.scrollTo({ top: val, behavior: 'smooth' }) };
+                }
+            })();
+    </script>
+</body>
+
+</html>
