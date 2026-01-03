@@ -12,7 +12,7 @@ export default function ProfileSidebar() {
                 {/* Status Badge */}
                 <div className="absolute top-6 right-6 z-10">
                     <div className="flex items-center gap-2 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                        <span className="w-2 h-2 rounded-full bg-green-600 animate-pulse" />
                         <span className="text-xs text-brand-gray font-medium">Available</span>
                     </div>
                 </div>
@@ -23,13 +23,13 @@ export default function ProfileSidebar() {
                         src="/hero.jpg"
                         alt="Shakhwat Hossain Rasel"
                         fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="object-cover object-[center_25%] transition-transform duration-700 group-hover:scale-105"
                         priority
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
 
                     <div className="absolute bottom-6 left-6 text-left">
-                        <h2 className="text-3xl font-heading font-bold leading-tight">Rasel</h2>
+                        <h2 className="text-3xl font-heading font-bold leading-tight">Shakhwat</h2>
                     </div>
                 </div>
 
