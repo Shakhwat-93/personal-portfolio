@@ -56,6 +56,8 @@ export const metadata: Metadata = {
   description: "Premium Digital Experiences & Technical Excellence.",
 };
 
+import LayoutContent from "@/components/layout/LayoutContent";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -68,18 +70,9 @@ export default function RootLayout({
         style={{ fontFamily: 'var(--font-neue-montreal)' }}
       >
         <SmoothScroll>
-          <div className="flex min-h-screen">
-            {/* Left Sidebar */}
-            <ProfileSidebar />
-
-            {/* Main Scrollable Content */}
-            <main className="flex-1 xl:ml-[400px] xl:mr-[100px] w-full min-h-screen relative z-10">
-              {children}
-            </main>
-
-            {/* Right Dock */}
-            <NavigationDock />
-          </div>
+          <LayoutContent>
+            {children}
+          </LayoutContent>
         </SmoothScroll>
       </body>
     </html>

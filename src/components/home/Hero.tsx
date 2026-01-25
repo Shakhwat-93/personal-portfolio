@@ -1,15 +1,34 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, RefreshCw } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function Hero() {
     const containerRef = useRef<HTMLDivElement>(null);
     const textRef = useRef<HTMLDivElement>(null);
+    const [content, setContent] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        async function fetchHero() {
+            try {
+                const { data, error } = await supabase
+                    .from('hero_content')
+                    .select('*')
+                    .single();
+
+                if (data) setContent(data);
+            } catch (err) {
+                console.error('Failed to fetch hero content:', err);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchHero();
+
         gsap.registerPlugin(ScrollTrigger);
 
         const tl = gsap.timeline({
@@ -42,12 +61,12 @@ export default function Hero() {
             ref={containerRef}
             className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden"
         >
-            <div className="max-w-5xl mx-auto px-4 md:px-8 w-full">
+            <div className="max-w-5xl mx-auto px-6 md:px-8 w-full">
 
                 {/* Text Content */}
-                <div ref={textRef} className="flex flex-col justify-center">
+                <div ref={textRef} className="flex flex-col justify-center items-center xl:items-start text-center xl:text-left">
                     <div className="overflow-hidden mb-8">
-                        <div className="flex items-center gap-2 hero-text-line">
+                        <div className="flex items-center justify-center xl:justify-start gap-2 hero-text-line">
                             <span className="w-2 h-2 rounded-full bg-orange-500"></span>
                             <h2 className="text-sm font-medium uppercase tracking-widest text-brand-gray">
                                 AI-augmented Web Developer
@@ -56,25 +75,24 @@ export default function Hero() {
                     </div>
 
                     <div className="overflow-hidden mb-2">
-                        <h1 className="hero-text-line text-6xl md:text-8xl lg:text-[7rem] font-bold font-heading leading-[0.9] tracking-tighter">
-                            Focus on
+                        <h1 className="hero-text-line text-4xl sm:text-6xl md:text-8xl lg:text-[7rem] font-bold font-heading leading-[0.9] tracking-tighter text-balance">
+                            {content?.heading_line1 || 'Focus on'}
                         </h1>
                     </div>
                     <div className="overflow-hidden mb-6">
-                        <h1 className="hero-text-line text-6xl md:text-8xl lg:text-[7rem] font-bold font-heading leading-[0.9] tracking-tighter text-brand-gray">
-                            Performance & <br /> <span className="text-white">Visuals.</span>
+                        <h1 className="hero-text-line text-4xl sm:text-6xl md:text-8xl lg:text-[7rem] font-bold font-heading leading-[0.9] tracking-tighter text-brand-gray text-balance">
+                            {content?.heading_line2 || 'Performance &'} <span className="text-white">{content?.highlight_text || 'Visuals.'}</span>
                         </h1>
                     </div>
 
                     <div className="overflow-hidden mb-12">
-                        <p className="hero-text-line text-lg md:text-xl text-brand-gray max-w-2xl leading-relaxed">
-                            I am a Full-Stack Developer specializing in building high-performance
-                            web applications with a focus on clean code and exceptional user experience.
+                        <p className="hero-text-line text-base md:text-xl text-brand-gray max-w-2xl leading-relaxed mx-auto xl:mx-0">
+                            {content?.subtext || 'I am a Full-Stack Developer specializing in building high-performance web applications with a focus on clean code and exceptional user experience.'}
                         </p>
                     </div>
 
                     {/* Buttons */}
-                    <div className="hero-text-line flex items-center gap-6 mb-24">
+                    <div className="hero-text-line flex flex-wrap items-center justify-center xl:justify-start gap-6 mb-24">
                         <a href="#work" className="bg-white text-black px-8 py-4 rounded-full font-bold hover:bg-gray-200 transition-colors">
                             My Portfolio
                         </a>
@@ -84,18 +102,24 @@ export default function Hero() {
                     </div>
 
                     {/* Stats */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-12 border-t border-white/10 pt-12">
+                    <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 border-t border-white/10 pt-12">
                         <div className="stat-item">
                             <span className="text-xs text-brand-gray uppercase tracking-widest block mb-2">Experience</span>
-                            <span className="text-3xl font-heading font-bold text-white italic">+03 Years</span>
+                            <span className="text-2xl sm:text-3xl font-heading font-bold text-white italic">
+                                {content?.experience_stat || '+03 Years'}
+                            </span>
                         </div>
                         <div className="stat-item">
                             <span className="text-xs text-brand-gray uppercase tracking-widest block mb-2">Projects</span>
-                            <span className="text-3xl font-heading font-bold text-white italic">20+ Done</span>
+                            <span className="text-2xl sm:text-3xl font-heading font-bold text-white italic">
+                                {content?.projects_stat || '20+ Done'}
+                            </span>
                         </div>
                         <div className="stat-item">
                             <span className="text-xs text-brand-gray uppercase tracking-widest block mb-2">Tech Stack</span>
-                            <span className="text-3xl font-heading font-bold text-white italic">MERN</span>
+                            <span className="text-2xl sm:text-3xl font-heading font-bold text-white italic">
+                                {content?.tech_stack_stat || 'MERN'}
+                            </span>
                         </div>
                     </div>
                 </div>

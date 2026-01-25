@@ -1,12 +1,33 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
-import { Github, Linkedin, Mail, Facebook, Download } from 'lucide-react';
+import { Github, Linkedin, Mail, Facebook, Download, RefreshCw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 
 export default function ProfileSidebar() {
+    const [profile, setProfile] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchProfile() {
+            try {
+                const { data, error } = await supabase
+                    .from('profile')
+                    .select('*')
+                    .single();
+                if (data) setProfile(data);
+            } catch (err) {
+                console.error('Profile fetch error:', err);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchProfile();
+    }, []);
+
     return (
-        <aside className="fixed left-0 top-0 h-screen w-[400px] p-8 hidden xl:flex flex-col justify-between z-50">
+        <aside className="w-full xl:fixed xl:left-0 xl:top-0 xl:h-screen xl:w-[400px] p-6 sm:p-8 flex flex-col z-50 relative">
             <div className="h-full w-full bg-[#111] rounded-3xl p-6 flex flex-col items-center text-center border border-white/5 relative overflow-hidden group">
 
                 {/* Status Badge */}
@@ -19,34 +40,32 @@ export default function ProfileSidebar() {
 
                 {/* Profile Image */}
                 <div className="w-full aspect-square rounded-2xl overflow-hidden mb-8 relative border border-white/5">
-                    <Image
-                        src="/hero.jpg"
-                        alt="Shakhwat Hossain Rasel"
-                        fill
-                        className="object-cover object-[center_25%] transition-transform duration-700 group-hover:scale-105"
-                        priority
+                    <img
+                        src={profile?.image_url || "/hero.jpg"}
+                        alt={profile?.name || "Shakhwat Hossain Rasel"}
+                        className="w-full h-full object-cover object-[center_25%] transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
 
                     <div className="absolute bottom-6 left-6 text-left">
-                        <h2 className="text-3xl font-heading font-bold leading-tight">Shakhwat</h2>
+                        <h2 className="text-3xl font-heading font-bold leading-tight">{profile?.name?.split(' ')[0] || 'Shakhwat'}</h2>
                     </div>
                 </div>
 
                 {/* Details */}
-                <div className="w-full mb-8">
-                    <h3 className="text-xl font-bold mb-1">Shakhwat Hossain</h3>
-                    <a href="mailto:shakhwat.rasel989@gmail.com" className="text-brand-gray text-sm hover:text-white transition-colors block mb-4">
-                        shakhwat.rasel989@gmail.com
+                <div className="w-full mb-8 text-center xl:text-center">
+                    <h3 className="text-xl font-bold mb-1">{profile?.name || 'Shakhwat Hossain'}</h3>
+                    <a href={`mailto:${profile?.email || 'shakhwat.rasel989@gmail.com'}`} className="text-brand-gray text-sm hover:text-white transition-colors block mb-4 text-balance">
+                        {profile?.email || 'shakhwat.rasel989@gmail.com'}
                     </a>
-                    <p className="text-brand-gray text-xs uppercase tracking-widest">Based in Dhaka, BD</p>
+                    <p className="text-brand-gray text-xs uppercase tracking-widest">{profile?.location || 'Based in Dhaka, BD'}</p>
                 </div>
 
                 {/* Socials */}
                 <div className="w-full flex justify-center gap-4 mb-auto">
-                    <SocialLink href="https://github.com/Start-with-Rasel" icon={<Github className="w-5 h-5" />} />
-                    <SocialLink href="https://www.linkedin.com/in/shakhwat-hossain-rasel-46506628b" icon={<Linkedin className="w-5 h-5" />} />
-                    <SocialLink href="mailto:shakhwat.rasel989@gmail.com" icon={<Mail className="w-5 h-5" />} />
+                    <SocialLink href={profile?.github_url || "https://github.com/Start-with-Rasel"} icon={<Github className="w-5 h-5" />} />
+                    <SocialLink href={profile?.linkedin_url || "https://www.linkedin.com/in/shakhwat-hossain-rasel-46506628b"} icon={<Linkedin className="w-5 h-5" />} />
+                    <SocialLink href={`mailto:${profile?.email || "shakhwat.rasel989@gmail.com"}`} icon={<Mail className="w-5 h-5" />} />
                 </div>
 
                 {/* CTA */}

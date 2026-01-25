@@ -5,8 +5,8 @@ import { Home, User, Layers, Mail, Code } from 'lucide-react';
 
 export default function NavigationDock() {
     return (
-        <aside className="fixed right-0 top-0 h-screen w-[100px] hidden xl:flex flex-col items-center justify-center z-50">
-            <div className="bg-[#111] border border-white/5 rounded-full py-8 px-3 flex flex-col gap-6 backdrop-blur-md">
+        <aside className="fixed bottom-6 left-1/2 -translate-x-1/2 xl:left-auto xl:right-0 xl:top-0 xl:translate-x-0 xl:h-screen w-max xl:w-[100px] flex items-center justify-center z-50">
+            <div className="bg-[#111]/80 border border-white/10 rounded-full py-3 px-6 xl:py-8 xl:px-3 flex flex-row xl:flex-col gap-6 backdrop-blur-lg shadow-2xl">
                 <NavLink href="/" icon={<Home className="w-5 h-5" />} label="Home" />
                 <NavLink href="#about" icon={<User className="w-5 h-5" />} label="About" />
                 <NavLink href="#skills" icon={<Code className="w-5 h-5" />} label="Skills" />
