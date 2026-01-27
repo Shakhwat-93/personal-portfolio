@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Plus, Trash2, ExternalLink, RefreshCw, Save, Edit3, X } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, RefreshCw, Save, Edit3, X, Image as ImageIcon } from 'lucide-react';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 export default function AdminProjects() {
     const [loading, setLoading] = useState(true);
@@ -23,18 +24,23 @@ export default function AdminProjects() {
 
     async function fetchProjects() {
         setLoading(true);
-        const { data, error } = await supabase
-            .from('projects')
-            .select('*')
-            .order('display_order', { ascending: true });
+        try {
+            const { data, error } = await supabase
+                .from('projects')
+                .select('*')
+                .order('display_order', { ascending: true });
 
-        if (data) setProjects(data);
-        setLoading(false);
+            if (data) setProjects(data);
+        } catch (err) {
+            console.error('Fetch projects error:', err);
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function handleAdd(e: React.FormEvent) {
         e.preventDefault();
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('projects')
             .insert([{ ...newProject, display_order: projects.length }]);
 
@@ -77,214 +83,230 @@ export default function AdminProjects() {
     }
 
     return (
-        <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
-                <div>
-                    <h1 className="text-4xl font-bold font-heading mb-2">Manage Projects</h1>
-                    <p className="text-brand-gray">Add, edit, or remove projects from your portfolio showcase.</p>
+        <div className="space-y-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                <div className="space-y-1">
+                    <h1 className="text-3xl md:text-5xl font-bold tracking-tighter uppercase italic">Projects Showcase</h1>
+                    <p className="text-brand-gray text-sm md:text-base font-medium">Manage your professional technical portfolio artifacts.</p>
                 </div>
                 <button
-                    onClick={() => setIsAdding(!isAdding)}
-                    className="bg-white text-black px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-gray-200 transition-all shadow-lg hover:shadow-white/10"
+                    onClick={() => setIsAdding(true)}
+                    className="w-full sm:w-auto bg-white text-black px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-zinc-200 transition-all shadow-xl active:scale-95"
                 >
-                    {isAdding ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                    {isAdding ? 'Cancel' : 'Add New Project'}
+                    <Plus className="w-5 h-5" />
+                    <span>Create Project</span>
                 </button>
             </div>
 
-            {/* Add Project Form */}
+            {/* Add Project Modal */}
             {isAdding && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <form onSubmit={handleAdd} className="bg-[#0a0a0a] w-full max-w-2xl p-8 rounded-3xl border border-white/10 space-y-6 shadow-2xl animate-in fade-in zoom-in duration-300">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-2xl font-bold">Add New Project</h2>
-                            <button type="button" onClick={() => setIsAdding(false)} className="p-2 hover:bg-white/5 rounded-full"><X /></button>
+                <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[100] flex items-center justify-center p-0 sm:p-6 overflow-y-auto">
+                    <div className="bg-[#0c0c0e] w-full max-w-3xl min-h-screen sm:min-h-0 sm:rounded-[2.5rem] border border-white/5 flex flex-col shadow-2xl">
+                        <div className="p-8 border-b border-white/5 flex justify-between items-center sticky top-0 bg-[#0c0c0e] z-10">
+                            <div>
+                                <h2 className="text-2xl font-bold tracking-tight italic uppercase">New Project</h2>
+                                <p className="text-xs text-brand-gray uppercase tracking-widest mt-1">Add a new artifact to your showcase</p>
+                            </div>
+                            <button onClick={() => setIsAdding(false)} className="p-3 hover:bg-white/5 rounded-full transition-colors"><X className="w-6 h-6" /></button>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-sm text-brand-gray uppercase tracking-widest">Project Title</label>
-                                <input
-                                    required
-                                    type="text"
-                                    value={newProject.title}
-                                    onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
-                                    className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 transition-colors"
-                                    placeholder="My Awesome App"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm text-brand-gray uppercase tracking-widest">Category</label>
-                                <input
-                                    required
-                                    type="text"
-                                    value={newProject.category}
-                                    onChange={(e) => setNewProject({ ...newProject, category: e.target.value })}
-                                    className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 transition-colors"
-                                    placeholder="Next.js & React"
-                                />
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-sm text-brand-gray uppercase tracking-widest">Live Link (URL)</label>
-                                <input
-                                    required
-                                    type="url"
-                                    value={newProject.link}
-                                    onChange={(e) => setNewProject({ ...newProject, link: e.target.value })}
-                                    className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 transition-colors"
-                                    placeholder="https://..."
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm text-brand-gray uppercase tracking-widest">Year</label>
-                                <input
-                                    required
-                                    type="text"
-                                    value={newProject.year}
-                                    onChange={(e) => setNewProject({ ...newProject, year: e.target.value })}
-                                    className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 transition-colors"
-                                    placeholder="2025"
-                                />
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm text-brand-gray uppercase tracking-widest">Image URL</label>
-                            <input
-                                required
-                                type="text"
-                                value={newProject.image_url}
-                                onChange={(e) => setNewProject({ ...newProject, image_url: e.target.value })}
-                                className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 transition-colors"
-                                placeholder="/projects/demo.png"
+
+                        <form onSubmit={handleAdd} className="p-8 space-y-8 flex-1 overflow-y-auto">
+                            <ImageUpload
+                                label="Project Thumbnail"
+                                defaultValue={newProject.image_url}
+                                onUpload={(url) => setNewProject({ ...newProject, image_url: url })}
                             />
-                        </div>
-                        <button type="submit" className="w-full bg-white text-black py-4 rounded-xl font-bold hover:bg-gray-200 transition-colors shadow-lg">
-                            Create Project
-                        </button>
-                    </form>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-3">
+                                    <label className="text-sm text-brand-gray uppercase tracking-widest font-bold">Project Title</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        value={newProject.title}
+                                        onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/30 transition-all font-medium"
+                                        placeholder="e.g. AI Workflow Engine"
+                                    />
+                                </div>
+                                <div className="space-y-3">
+                                    <label className="text-sm text-brand-gray uppercase tracking-widest font-bold">Stack / Category</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        value={newProject.category}
+                                        onChange={(e) => setNewProject({ ...newProject, category: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/30 transition-all font-medium"
+                                        placeholder="e.g. Next.js & Supabase"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-3">
+                                    <label className="text-sm text-brand-gray uppercase tracking-widest font-bold">Launch URL</label>
+                                    <input
+                                        required
+                                        type="url"
+                                        value={newProject.link}
+                                        onChange={(e) => setNewProject({ ...newProject, link: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/30 transition-all font-medium"
+                                        placeholder="https://..."
+                                    />
+                                </div>
+                                <div className="space-y-3">
+                                    <label className="text-sm text-brand-gray uppercase tracking-widest font-bold">Release Year</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        value={newProject.year}
+                                        onChange={(e) => setNewProject({ ...newProject, year: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/30 transition-all font-medium"
+                                        placeholder="2025"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="pt-6">
+                                <button type="submit" className="w-full bg-white text-black py-5 rounded-2xl font-bold hover:bg-zinc-200 transition-all shadow-xl active:scale-[0.98]">
+                                    Initialize Project
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             )}
 
             {/* Edit Project Modal */}
             {editingProject && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <form onSubmit={handleUpdate} className="bg-[#0a0a0a] w-full max-w-2xl p-8 rounded-3xl border border-white/10 space-y-6 shadow-2xl animate-in fade-in zoom-in duration-300">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-2xl font-bold">Edit Project</h2>
-                            <button type="button" onClick={() => setEditingProject(null)} className="p-2 hover:bg-white/5 rounded-full"><X /></button>
+                <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[100] flex items-center justify-center p-0 sm:p-6 overflow-y-auto">
+                    <div className="bg-[#0c0c0e] w-full max-w-3xl min-h-screen sm:min-h-0 sm:rounded-[2.5rem] border border-white/5 flex flex-col shadow-2xl">
+                        <div className="p-8 border-b border-white/5 flex justify-between items-center sticky top-0 bg-[#0c0c0e] z-10">
+                            <div>
+                                <h2 className="text-2xl font-bold tracking-tight italic uppercase text-blue-400">Edit Artifact</h2>
+                                <p className="text-xs text-brand-gray uppercase tracking-widest mt-1">Refining: {editingProject.title}</p>
+                            </div>
+                            <button onClick={() => setEditingProject(null)} className="p-3 hover:bg-white/5 rounded-full transition-colors"><X className="w-6 h-6" /></button>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-sm text-brand-gray uppercase tracking-widest">Project Title</label>
-                                <input
-                                    required
-                                    type="text"
-                                    value={editingProject.title}
-                                    onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
-                                    className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 transition-colors"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm text-brand-gray uppercase tracking-widest">Category</label>
-                                <input
-                                    required
-                                    type="text"
-                                    value={editingProject.category}
-                                    onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value })}
-                                    className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 transition-colors"
-                                />
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-sm text-brand-gray uppercase tracking-widest">Live Link (URL)</label>
-                                <input
-                                    required
-                                    type="url"
-                                    value={editingProject.link}
-                                    onChange={(e) => setEditingProject({ ...editingProject, link: e.target.value })}
-                                    className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 transition-colors"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm text-brand-gray uppercase tracking-widest">Year</label>
-                                <input
-                                    required
-                                    type="text"
-                                    value={editingProject.year}
-                                    onChange={(e) => setEditingProject({ ...editingProject, year: e.target.value })}
-                                    className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 transition-colors"
-                                />
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm text-brand-gray uppercase tracking-widest">Image URL</label>
-                            <input
-                                required
-                                type="text"
-                                value={editingProject.image_url}
-                                onChange={(e) => setEditingProject({ ...editingProject, image_url: e.target.value })}
-                                className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 transition-colors"
+
+                        <form onSubmit={handleUpdate} className="p-8 space-y-8 flex-1 overflow-y-auto">
+                            <ImageUpload
+                                label="Update Thumbnail"
+                                defaultValue={editingProject.image_url}
+                                onUpload={(url) => setEditingProject({ ...editingProject, image_url: url })}
                             />
-                        </div>
-                        <button type="submit" className="w-full bg-white text-black py-4 rounded-xl font-bold hover:bg-gray-200 transition-colors shadow-lg flex items-center justify-center gap-2">
-                            <Save className="w-4 h-4" /> Save Changes
-                        </button>
-                    </form>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-3">
+                                    <label className="text-sm text-brand-gray uppercase tracking-widest font-bold">Project Title</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        value={editingProject.title}
+                                        onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/30 transition-all font-medium"
+                                    />
+                                </div>
+                                <div className="space-y-3">
+                                    <label className="text-sm text-brand-gray uppercase tracking-widest font-bold">Stack / Category</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        value={editingProject.category}
+                                        onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/30 transition-all font-medium"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-3">
+                                    <label className="text-sm text-brand-gray uppercase tracking-widest font-bold">Live Link</label>
+                                    <input
+                                        required
+                                        type="url"
+                                        value={editingProject.link}
+                                        onChange={(e) => setEditingProject({ ...editingProject, link: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/30 transition-all font-medium"
+                                    />
+                                </div>
+                                <div className="space-y-3">
+                                    <label className="text-sm text-brand-gray uppercase tracking-widest font-bold">Year</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        value={editingProject.year}
+                                        onChange={(e) => setEditingProject({ ...editingProject, year: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/30 transition-all font-medium"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="pt-6">
+                                <button type="submit" className="w-full bg-blue-500 text-white py-5 rounded-2xl font-bold hover:bg-blue-600 transition-all shadow-xl active:scale-[0.98] flex items-center justify-center gap-2">
+                                    <Save className="w-5 h-5" /> Commit Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             )}
 
             {loading ? (
-                <div className="flex flex-col items-center justify-center py-20 text-brand-gray gap-4">
-                    <RefreshCw className="w-10 h-10 animate-spin text-white" />
-                    <p className="animate-pulse">Loading Projects...</p>
+                <div className="flex flex-col items-center justify-center py-32 text-brand-gray gap-5">
+                    <RefreshCw className="w-12 h-12 animate-spin text-white opacity-20" />
+                    <p className="text-xs uppercase tracking-[0.3em] font-bold animate-pulse">Syncing Data...</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10">
                     {projects.length > 0 ? projects.map((project) => (
-                        <div key={project.id} className="bg-[#0a0a0a] p-6 rounded-3xl border border-white/5 flex flex-col group hover:border-white/20 transition-all duration-500 shadow-xl">
-                            <div className="relative aspect-video rounded-2xl overflow-hidden mb-6 bg-white/5 border border-white/10">
-                                <img src={project.image_url} alt={project.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                        <div key={project.id} className="bg-[#0c0c0e] rounded-[2.5rem] border border-white/5 flex flex-col group hover:border-white/20 transition-all duration-700 shadow-2xl overflow-hidden">
+                            <div className="relative aspect-video overflow-hidden bg-black/40 border-b border-white/5">
+                                <img src={project.image_url || '/hero.jpg'} alt={project.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-80 group-hover:opacity-100" />
+                                <div className="absolute top-4 right-4 flex gap-2">
                                     <button
                                         onClick={() => setEditingProject(project)}
-                                        className="p-3 bg-white text-black rounded-full hover:scale-110 transition-transform shadow-xl"
-                                        title="Edit Project"
+                                        className="p-3 bg-white/10 backdrop-blur-xl text-white rounded-full hover:bg-white hover:text-black transition-all shadow-2xl active:scale-90"
+                                        title="Edit Artifact"
                                     >
                                         <Edit3 className="w-5 h-5" />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(project.id)}
-                                        className="p-3 bg-red-500 text-white rounded-full hover:scale-110 transition-transform shadow-xl"
-                                        title="Delete Project"
+                                        className="p-3 bg-red-500/10 backdrop-blur-xl text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all shadow-2xl active:scale-90"
+                                        title="Delete Artifact"
                                     >
                                         <Trash2 className="w-5 h-5" />
                                     </button>
                                 </div>
+                                <div className="absolute bottom-4 left-4">
+                                    <span className="text-[10px] text-white/50 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 uppercase font-bold tracking-widest">{project.year}</span>
+                                </div>
                             </div>
-                            <div className="flex justify-between items-start">
+                            <div className="p-8 flex items-center justify-between gap-6">
                                 <div className="space-y-1">
-                                    <h3 className="text-2xl font-bold font-heading">{project.title}</h3>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-brand-gray text-sm">{project.category}</span>
-                                        <span className="w-1 h-1 bg-brand-gray/30 rounded-full" />
-                                        <span className="text-brand-gray text-xs px-2 py-0.5 border border-white/10 rounded-full">{project.year}</span>
-                                    </div>
+                                    <h3 className="text-2xl font-bold tracking-tight italic uppercase">{project.title}</h3>
+                                    <p className="text-brand-gray text-sm font-medium">{project.category}</p>
                                 </div>
                                 <a
                                     href={project.link}
                                     target="_blank"
-                                    className="p-2 bg-white/5 text-brand-gray rounded-full hover:bg-white/10 hover:text-white transition-all"
-                                    title="View Live"
+                                    className="p-4 bg-white/5 text-brand-gray rounded-[1.5rem] hover:bg-white hover:text-black transition-all group/link"
+                                    title="View Deployment"
                                 >
-                                    <ExternalLink className="w-5 h-5" />
+                                    <ExternalLink className="w-6 h-6 transition-transform group-hover/link:rotate-45" />
                                 </a>
                             </div>
                         </div>
                     )) : (
-                        <div className="col-span-full py-20 border border-dashed border-white/10 rounded-3xl text-center">
-                            <p className="text-brand-gray">No projects found. Start by adding your first project!</p>
+                        <div className="col-span-full py-32 border-2 border-dashed border-white/5 rounded-[3rem] text-center flex flex-col items-center gap-6">
+                            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center">
+                                <ImageIcon className="w-8 h-8 text-brand-gray" />
+                            </div>
+                            <div>
+                                <p className="text-brand-gray font-medium text-lg">Empty Showcase Archive</p>
+                                <p className="text-brand-gray/50 text-xs uppercase tracking-widest mt-1">Start initializing artifacts</p>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -292,4 +314,5 @@ export default function AdminProjects() {
         </div>
     );
 }
+
 

@@ -68,6 +68,7 @@ export default function RootLayout({
       <body
         className={`${neueMontreal.variable} font-sans bg-black text-white selection:bg-white selection:text-black`}
         style={{ fontFamily: 'var(--font-neue-montreal)' }}
+        suppressHydrationWarning
       >
         <SmoothScroll>
           <LayoutContent>

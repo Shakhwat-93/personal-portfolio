@@ -4,12 +4,17 @@
   --font-sans: var(--font-neue-montreal), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-neue-montreal), ui-sans-serif, system-ui, sans-serif;
 
+  /* Refined Color Palette */
   --color-brand-black: #050505;
-  --color-brand-charcoal: #111111;
-  --color-brand-gray: #888888;
+  --color-brand-charcoal: #0c0c0e;
+  --color-brand-gray: #a1a1aa; /* Zinc-400 for better contrast */
   --color-brand-white: #f5f5f7;
+  --color-brand-accent: #ffffff;
 
+  /* Standardized Spacing & Easing */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  
+  --spacing-safe-bottom: 5rem; /* For mobile navigation clearance */
 }
 
 /* Base Reset */
@@ -39,6 +44,14 @@ html.lenis body {
   .text-balance {
     text-wrap: balance;
   }
+  
+  .glass-morphism {
+    @apply bg-brand-charcoal/80 border border-white/10 backdrop-blur-xl transition-all duration-300;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-white to-brand-gray;
+  }
 }
 
 /* Custom Scrollbar */
@@ -65,4 +78,15 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+/* Typography Perfection */
+h1, h2, h3, h4, h5, h6 {
+  @apply tracking-tight;
+  line-height: 1.1;
+}
+
+p {
+  @apply text-brand-gray;
 }

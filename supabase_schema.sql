@@ -72,3 +72,40 @@ CREATE TABLE experience (
   description TEXT,
   display_order INTEGER DEFAULT 0
 );
+
+-- STORAGE SETUP
+-- Run this in the Supabase SQL Editor to DEFINITIVELY unlock your 'portfolio' bucket
+
+-- 1. Ensure the bucket is public and exists
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('portfolio', 'portfolio', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- 2. RESET: Clear ALL existing storage policies to start fresh
+DROP POLICY IF EXISTS "Public Access" ON storage.objects;
+DROP POLICY IF EXISTS "Portfolio_Insert" ON storage.objects;
+DROP POLICY IF EXISTS "Portfolio_Update" ON storage.objects;
+DROP POLICY IF EXISTS "Portfolio_Delete" ON storage.objects;
+DROP POLICY IF EXISTS "Anon Upload Access" ON storage.objects;
+DROP POLICY IF EXISTS "Anon Delete Access" ON storage.objects;
+DROP POLICY IF EXISTS "Master_Unlock_Portfolio" ON storage.objects;
+DROP POLICY IF EXISTS "View Buckets" ON storage.buckets;
+
+-- 3. THE FREEDOM POLICY
+-- This is the "God Mode" policy. It allows anyone to do anything to the 'portfolio' bucket.
+CREATE POLICY "Absolute_Freedom"
+ON storage.objects FOR ALL
+TO public, anon, authenticated
+USING (bucket_id = 'portfolio')
+WITH CHECK (bucket_id = 'portfolio');
+
+-- 4. Make bucket metadata visible
+CREATE POLICY "Visible_Buckets"
+ON storage.buckets FOR SELECT
+TO public, anon, authenticated
+USING (id = 'portfolio');
+
+
+
+
+
