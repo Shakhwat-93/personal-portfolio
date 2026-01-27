@@ -20,13 +20,20 @@ export default function About() {
                 const { data: expData } = await supabase.from('experience').select('*').order('display_order', { ascending: true });
 
                 if (aboutData) setContent(aboutData);
-                if (eduData && eduData.length > 0) setEducation(eduData);
-                if (expData && expData.length > 0) setExperience(expData);
+                if (eduData) setEducation(eduData);
+                if (expData) setExperience(expData);
             } catch (err) {
                 console.error('About fetch error:', err);
             }
         }
         fetchAbout();
+
+        // Realtime Subscriptions
+        const channels = [
+            supabase.channel('about-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'about_content' }, () => fetchAbout()).subscribe(),
+            supabase.channel('edu-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'education' }, () => fetchAbout()).subscribe(),
+            supabase.channel('exp-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'experience' }, () => fetchAbout()).subscribe()
+        ];
 
         gsap.registerPlugin(ScrollTrigger);
 
@@ -49,6 +56,9 @@ export default function About() {
             );
         });
 
+        return () => {
+            channels.forEach(ch => supabase.removeChannel(ch));
+        };
     }, []);
 
     return (

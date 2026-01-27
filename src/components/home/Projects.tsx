@@ -22,7 +22,7 @@ export default function Projects() {
                     .select('*')
                     .order('display_order', { ascending: true });
 
-                if (data && data.length > 0) setDynamicProjects(data);
+                if (data) setDynamicProjects(data);
             } catch (err) {
                 console.error('Failed to fetch projects:', err);
             } finally {
@@ -30,6 +30,17 @@ export default function Projects() {
             }
         }
         fetchProjects();
+
+        // Realtime Subscription
+        const channel = supabase
+            .channel('projects-changes')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'projects' },
+                () => {
+                    fetchProjects(); // Re-fetch on any change to maintain order and structure
+                }
+            )
+            .subscribe();
 
         gsap.registerPlugin(ScrollTrigger);
 
@@ -50,7 +61,12 @@ export default function Projects() {
                 }
             );
         });
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
+
 
     return (
         <section id="work" ref={containerRef} className="py-24 md:py-32 bg-black text-white relative border-t border-white/5">

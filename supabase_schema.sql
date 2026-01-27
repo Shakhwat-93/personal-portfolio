@@ -1,3 +1,15 @@
+-- REALTIME ENABLMENT
+-- Run this in the Supabase SQL Editor to enable realtime for all tables
+-- This allows the WebSocket to notify the frontend of ANY database changes instantly.
+
+ALTER PUBLICATION supabase_realtime ADD TABLE profile;
+ALTER PUBLICATION supabase_realtime ADD TABLE hero_content;
+ALTER PUBLICATION supabase_realtime ADD TABLE projects;
+ALTER PUBLICATION supabase_realtime ADD TABLE skills;
+ALTER PUBLICATION supabase_realtime ADD TABLE about_content;
+ALTER PUBLICATION supabase_realtime ADD TABLE education;
+ALTER PUBLICATION supabase_realtime ADD TABLE experience;
+
 -- PROFILE TABLE
 CREATE TABLE profile (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

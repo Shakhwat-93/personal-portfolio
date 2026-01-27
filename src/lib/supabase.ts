@@ -1,10 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// Provide dummy values during build time to prevent crashes
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder-url.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('Supabase credentials are missing. Check your .env.local file.');
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    if (typeof window !== 'undefined') {
+        console.warn('Supabase credentials are missing. Check your integration.');
+    }
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+

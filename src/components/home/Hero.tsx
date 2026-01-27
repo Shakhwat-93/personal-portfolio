@@ -29,6 +29,18 @@ export default function Hero() {
         }
         fetchHero();
 
+        // Realtime Subscription
+        const channel = supabase
+            .channel('hero-changes')
+            .on('postgres_changes',
+                { event: 'UPDATE', schema: 'public', table: 'hero_content' },
+                (payload) => {
+                    console.log('Hero Realtime Update:', payload);
+                    setContent(payload.new);
+                }
+            )
+            .subscribe();
+
         gsap.registerPlugin(ScrollTrigger);
 
         const tl = gsap.timeline({
@@ -52,8 +64,10 @@ export default function Hero() {
 
         return () => {
             tl.kill();
+            supabase.removeChannel(channel);
         };
     }, []);
+
 
     return (
         <section
